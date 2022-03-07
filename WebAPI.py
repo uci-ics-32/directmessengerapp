@@ -2,6 +2,10 @@
 # jphomer@uci.edu
 # 14782048
 
+# Christian Patino
+# patinoc1@uci.edu
+# 23141678
+
 # webapi.py
 
 # Starter code for assignment 4 in ICS 32 Programming with Software Libraries in Python

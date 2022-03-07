@@ -2,6 +2,10 @@
 # jphomer@uci.edu
 # 14782048
 
+# Christian Patino
+# patinoc1@uci.edu
+# 23141678
+
 # ui.py
 
 # Starter code for assignment 2 in ICS 32 Programming with Software Libraries in Python

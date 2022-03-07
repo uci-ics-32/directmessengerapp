@@ -2,6 +2,10 @@
 # jphomer@uci.edu
 # 14782048
 
+# Christian Patino
+# patinoc1@uci.edu
+# 23141678
+
 # extracreditapi.py
 
 
