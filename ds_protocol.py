@@ -70,6 +70,18 @@ def rec_msg(recv, obj):
     print(f'\nSuccessfully published {obj} to DS Server\n')
   else:
     print(resp['response']['message'] + '\n')
+
+def convert_to_list(recv):
+  message_list = []
+
+  resp = recv.readline()
+  resp = json.loads(resp)
+  messages = resp['response']['messages']
+  for message in messages:
+    # TODO: get who the message is from
+    message_list.append(message['message'])
+  
+  return message_list
     
 
 def disconnect(conn):
@@ -77,4 +89,5 @@ def disconnect(conn):
   conn.send.close()
   conn.recv.close()
   
-
+if __name__ == '__main__':
+  pass

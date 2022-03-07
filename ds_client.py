@@ -15,6 +15,7 @@
 import socket
 import ds_protocol
 import time
+import ds_messenger
 
 
 def has_whitespace(string):
@@ -89,13 +90,44 @@ def send(server:str, port:int, username:str, password:str, message:str, bio:str=
     bio_msg = '{"token":"'+  token  +'", "bio": {"entry": "'+ bio +'","timestamp": ""}}'
 
     if has_whitespace(bio):
-      print('Error. Bio cannot have whitespace')
+      print('Error. Bio cannot be whitespace')
       return False
     else:
       ds_protocol.send_msg(bio_msg, send)
       ds_protocol.rec_msg(recv, 'bio')
     return True
 
+  # TODO: return false if fails
+  # def send_dm(token, msg):
+  #   # TODO: change recipient
+  #   dm_msg = '{"token":"'+  token  +'", "directmessage": {"entry": "'+ msg +'","recipient": "nokizzy","timestamp": ""}}'
+
+  #   if has_whitespace(msg):
+  #     print('Error. Messsage cannot be whitespace')
+  #     return False
+
+  #   ds_protocol.send_msg(dm_msg, send)
+  #   ds_protocol.rec_msg(recv, 'direct message')
+    
+  #   return True
+
+
+  # def get_unread_messages(token):
+  #   inbox_msg = '{"token":"'+  token  +'", "directmessage": "new"}'
+
+  #   ds_protocol.send_msg(inbox_msg, send)
+  #   ds_protocol.convert_to_list(recv)
+
+  #   return True
+
+  # def get_all_messages(token):
+  #   all_msg = '{"token":"' + token + '", "directmessage": "all"}'
+  #   ds_protocol.send_msg(all_msg, send)
+  #   ds_protocol.convert_to_list(recv)
+
+  #   return True
+
+  
 
   token = join() 
 
@@ -111,3 +143,6 @@ def send(server:str, port:int, username:str, password:str, message:str, bio:str=
 
   # Returns true if everything works as intended
   return True
+
+if __name__ == "__main__":
+  pass
