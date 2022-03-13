@@ -6,7 +6,7 @@
 # patinoc1@uci.edu
 # 23141678
 
-# a4.py
+# a6.py
 
 # Starter code for assignment 4 in ICS 32 Programming with Software Libraries in Python
 

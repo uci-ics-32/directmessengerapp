@@ -46,7 +46,8 @@ class DirectMessenger:
         dm_msg = '{"token":"'+  self.token  +'", "directmessage": {"entry": "' + message + '","recipient": "' + recipient + '","timestamp": ""}}'
 
         ds_protocol.send_msg(dm_msg, self.sends)
-        ds_protocol.rec_msg(self.recvs, 'direct message')
+        json1 = ds_protocol.rec_msg(self.recvs, ' direct message')
+        ds_protocol.convert_to_list(json1)
         
         # TODO: return false if send failed
         return True
@@ -55,7 +56,8 @@ class DirectMessenger:
         inbox_msg = '{"token":"'+  self.token  +'", "directmessage": "new"}'
 
         ds_protocol.send_msg(inbox_msg, self.sends)
-        msg_list = ds_protocol.convert_to_list(self.recvs)
+        resp = ds_protocol.rec_msg(self.recvs, ' new messages')
+        msg_list = ds_protocol.convert_to_list(resp)
 
         dm_list = []
         for msg in msg_list:
@@ -66,7 +68,8 @@ class DirectMessenger:
     def retrieve_all(self) -> list:
         all_msg = '{"token":"' + self.token + '", "directmessage": "all"}'
         ds_protocol.send_msg(all_msg, self.sends)
-        msg_list = ds_protocol.convert_to_list(self.recvs)
+        resp = ds_protocol.rec_msg(self.recvs, ' all messages')
+        msg_list = ds_protocol.convert_to_list(resp)
 
         dm_list = []
         for msg in msg_list:

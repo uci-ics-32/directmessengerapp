@@ -80,7 +80,7 @@ def send(server:str, port:int, username:str, password:str, message:str, bio:str=
       return False
     else:
       ds_protocol.send_msg(post_msg, send)
-      ds_protocol.rec_msg(recv, 'post')
+      ds_protocol.rec_msg(recv, ' post')
     return True
     
 
@@ -94,7 +94,7 @@ def send(server:str, port:int, username:str, password:str, message:str, bio:str=
       return False
     else:
       ds_protocol.send_msg(bio_msg, send)
-      ds_protocol.rec_msg(recv, 'bio')
+      ds_protocol.rec_msg(recv, ' bio')
     return True
 
   # TODO: return false if fails

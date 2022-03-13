@@ -67,19 +67,24 @@ def rec_msg(recv, obj):
   resp = recv.readline()
   resp = json.loads(resp)
   if resp["response"]["type"] == 'ok':
-    print(f'\nSuccessfully published {obj} to DS Server\n')
+    print(f'\nSuccessfully published{obj} to DS Server\n')
   else:
     print(resp['response']['message'] + '\n')
 
-def convert_to_list(recv):
+  return resp
+
+def convert_to_list(json):
+  '''Extends the message conversion code to account for direct messaging responses'''
   message_list = []
 
-  resp = recv.readline()
-  resp = json.loads(resp)
-  messages = resp['response']['messages']
-  for message in messages:
+  try:
+    message = json['response']['message']
+    message_list.append(message)
+  except:
+    messages = json['response']['messages']
+    for message in messages:
     # TODO: get who the message is from
-    message_list.append(message['message'])
+      message_list.append(message['message'])
   
   return message_list
     
