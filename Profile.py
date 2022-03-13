@@ -16,6 +16,8 @@
 import json, time, os
 from pathlib import Path
 
+# TODO: finish part 3
+
 
 """
 DsuFileError is a custom exception handler that you should catch in your own code. It
@@ -98,6 +100,9 @@ class Profile:
         self.password = password # REQUIRED
         self.bio = ''            # OPTIONAL
         self._posts = []         # OPTIONAL
+        self.new = []
+        self.all = []
+        self.recipients = []
     
     """
 
@@ -187,6 +192,15 @@ class Profile:
                 for post_obj in obj['_posts']:
                     post = Post(post_obj['entry'], post_obj['timestamp'])
                     self._posts.append(post)
+                for msg_obj in obj['new']:
+                    msg = Post(msg_obj['message'])
+                    self.new.append(msg)
+                for msg_obj in obj['all']:
+                    msg = Post(msg_obj['message'])
+                    self.all.append(msg)
+                for rec_obj in obj['recipients']:
+                    rec = Post(rec_obj['recipient'])
+                    self.recipients.append(rec)
                 f.close()
             except Exception as ex:
                 raise DsuProfileError(ex)
