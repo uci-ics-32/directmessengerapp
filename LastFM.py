@@ -48,7 +48,7 @@ class LastFM(WebAPI):
         Calls the web api using the required values and stores the response in class data attributes.
         '''
         #Calls the _download_url function that undergoes the API request and receives a response
-        url = f"https://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key={self.key}&format=json"
+        url = f"http://ws.audioscrobbler.com/2.0/?method=chart.gettoptracks&api_key={self.key}&format=json"
         r_obj = self._download_url(url)
 
         #Sets the object's various attributes to the information that is requested from the api server
