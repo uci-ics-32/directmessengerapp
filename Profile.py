@@ -81,6 +81,21 @@ class Post(dict):
     timestamp = property(get_time, set_time)
     
     
+class Messages(dict):
+    def __init__(self, sender, entry:str = None):
+        self.set_entry(entry, sender)
+
+        # Subclass dict to expose Post properties for serialization
+        # Don't worry about this!
+    
+    def set_entry(self, entry, sender):
+        self._entry = entry
+        dict.__setitem__(self, sender, [{'sender': sender, 'message': entry}])
+
+    def get_entry(self):
+        return self._entry
+
+
 class Profile:
     """
     The Profile class exposes the properties required to join an ICS 32 DSU server. You will need to 
@@ -99,11 +114,12 @@ class Profile:
         self.username = username # REQUIRED
         self.password = password # REQUIRED
         self.bio = ''            # OPTIONAL
-        self._posts = []         # OPTIONAL
-        self.new = []
-        self.all = []
+        # self._posts = []         # OPTIONAL
+        # self.new = []
+        # self.all = []
         self.recipients = []
-    
+        # {_recipients: [{'mark': [{'sender': 'me', 'msg': 'hello'}, {'sender': 'you', 'msg': 'hi'}]}]}
+        # recipients : [{'conversations': {'mark'}, {}, {}}]
     """
 
     add_post accepts a Post object as parameter and appends it to the posts list. Posts are stored in a 
@@ -113,11 +129,16 @@ class Profile:
 
     """
 
-    def add_post(self, post: Post) -> None:
-        self._posts.append(post)
+    # def add_post(self, post: Post) -> None:
+    #     self._posts.append(post)
 
-    def add_recipient(self, recipient):
-        self.recipients.append(recipient)
+    def add_message(self, sender, message: Messages):
+        print(message)
+        for key in message.keys():
+            if key == sender:
+                message[sender].append(message)
+            else:
+                self.recipients.append(message)
 
     """
 
@@ -129,20 +150,20 @@ class Profile:
 
     """
 
-    def del_post(self, index: int) -> bool:
-        try:
-            del self._posts[index]
-            return True
-        except IndexError:
-            return False
+    # def del_post(self, index: int) -> bool:
+    #     try:
+    #         del self._posts[index]
+    #         return True
+    #     except IndexError:
+    #         return False
         
     """
     
     get_posts returns the list object containing all posts that have been added to the Profile object
 
     """
-    def get_posts(self) -> list[Post]:
-        return self._posts
+    # def get_posts(self) -> list[Post]:
+    #     return self._posts
 
     def get_recipients(self):
         return self.recipients
@@ -184,7 +205,7 @@ class Profile:
     Raises DsuProfileError, DsuFileError
 
     """
-    def load_profile(self, path: str) -> None:
+    def load_profile(self, path: str, sender='hi') -> None:
         p = Path(path)
 
         if os.path.exists(p) and p.suffix == '.dsu':
@@ -195,18 +216,23 @@ class Profile:
                 self.password = obj['password']
                 self.dsuserver = obj['dsuserver']
                 self.bio = obj['bio']
-                for post_obj in obj['_posts']:
-                    post = Post(post_obj['entry'], post_obj['timestamp'])
-                    self._posts.append(post)
-                for msg_obj in obj['new']:
-                    msg = Post(msg_obj['message'])
-                    self.new.append(msg)
-                for msg_obj in obj['all']:
-                    msg = Post(msg_obj['message'])
-                    self.all.append(msg)
-                self.recipients = obj['recipients']
+                # for post_obj in obj['_posts']:
+                #     post = Post(post_obj[sender], post_obj['timestamp'])
+                #     self._posts.append(post)
+                for msg_obj in obj['recipients']:
+                    msg = Messages(msg_obj[sender])
+                    self.recipients.append(msg)
                 f.close()
             except Exception as ex:
                 raise DsuProfileError(ex)
         else:
             raise DsuFileError()
+
+
+#Tester code
+
+profile = Profile()
+profile.add_message('christian', Messages('christian', 'yert'))
+profile.add_message('christian', Messages('christian', 'hi'))
+profile.add_message('jimmy', Messages('jimmy', 'hi'))
+profile.save_profile('C:\\Users\\James\\Development\\ICS 32 2022\\a6\\ics-32-w22-final-project-30-series-owners\\ick.dsu')

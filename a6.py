@@ -18,10 +18,12 @@
 
 
 
+from cmath import e
+from ctypes import alignment
 from pickle import TRUE
 import tkinter as tk
-from tkinter import Toplevel, ttk, filedialog
-from turtle import width
+from tkinter import E, Toplevel, ttk, filedialog
+from turtle import right, width
 from Profile import Post
 from Profile import Profile
 
@@ -147,8 +149,16 @@ class Body(tk.Frame):
         self.entry_editor.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=0, pady=0)
 
         self.msg_box = tk.Text(master=msg_frame, width=0, height=21)
-        self.msg_box.configure(state=tk.DISABLED)
+        # self.msg_box.configure(state=tk.DISABLED)
         self.msg_box.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=0, pady=0)
+
+        #REFERENCE
+
+        # self.msg_box.insert(0.0, 'Hello world\n')
+        # self.msg_box.tag_configure('tag-right', justify='right')
+        # self.msg_box.insert(tk.END, 'Hi there\n', 'tag-right')
+        # self.msg_box.insert(tk.END, 'nm wbu?')
+        # self.msg_box.configure(state=tk.DISABLED)
 
         scroll_frame = tk.Frame(master=msg_frame, bg="blue", width=10)
         scroll_frame.pack(fill=tk.BOTH, side=tk.LEFT, expand=False)
@@ -309,7 +319,7 @@ class MainApp(tk.Frame):
             recipient = user[user.index('"') + 1:-1]
             # Entries must be between the double quotes
             self.body.insert_post(recipient)
-            self._current_profile.add_recipient(recipient)
+            #self._current_profile.add_recipient(recipient)
             self._current_profile.save_profile(self._profile_filename)
         except:
             print('Username error. Make sure input is between double quotes and that a profile is active!')
