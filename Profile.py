@@ -116,6 +116,9 @@ class Profile:
     def add_post(self, post: Post) -> None:
         self._posts.append(post)
 
+    def add_recipient(self, recipient):
+        self.recipients.append(recipient)
+
     """
 
     del_post removes a Post at a given index and returns True if successful and False if an invalid 
@@ -140,6 +143,9 @@ class Profile:
     """
     def get_posts(self) -> list[Post]:
         return self._posts
+
+    def get_recipients(self):
+        return self.recipients
 
     """
 
@@ -198,9 +204,7 @@ class Profile:
                 for msg_obj in obj['all']:
                     msg = Post(msg_obj['message'])
                     self.all.append(msg)
-                for rec_obj in obj['recipients']:
-                    rec = Post(rec_obj['recipient'])
-                    self.recipients.append(rec)
+                self.recipients = obj['recipients']
                 f.close()
             except Exception as ex:
                 raise DsuProfileError(ex)
