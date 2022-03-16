@@ -16,7 +16,7 @@
 # 
 # The following module provides a graphical user interface shell for the DSP journaling program.
 
-
+# TODO: take out null
 
 from cmath import e
 from ctypes import alignment
@@ -26,6 +26,9 @@ from tkinter import E, Toplevel, ttk, filedialog
 from turtle import right, width
 from Profile import Post
 from Profile import Profile
+from Profile import Messages
+from ds_messenger import DirectMessenger
+import time
 
 """
 A subclass of tk.Frame that is responsible for drawing all of the widgets
@@ -38,10 +41,10 @@ class Body(tk.Frame):
         self._select_callback = select_callback
 
         # a list of the Post objects available in the active DSU file
-        self._posts = [Post]
-        self.new = []
-        self.all = []
-        self.recipients = []
+        # self._posts = [Post]
+        # self.new = []
+        # self.all = []
+        self.messages = [Messages]
         
         # After all initialization is complete, call the _draw method to pack the widgets
         # into the Body instance 
@@ -52,10 +55,32 @@ class Body(tk.Frame):
     is selected.
     """
     def node_select(self, event):
+        global index_global
         index = int(self.posts_tree.selection()[0])
-        entry = self._posts[index].entry
-        self.set_text_entry(entry)
+        index_global = index
+        #REFERENCE
+
+        # self.msg_box.insert(0.0, 'Hello world\n')
+        # self.msg_box.tag_configure('tag-right', justify='right')
+        # self.msg_box.insert(tk.END, 'Hi there\n', 'tag-right')
+        # self.msg_box.insert(tk.END, 'nm wbu?')
+        # self.msg_box.configure(state=tk.DISABLED)
+        self.insert_msg_box()
     
+
+    def insert_msg_box(self):
+        messages = self.messages[index_global]['messages']
+        self.msg_box.configure(state=tk.NORMAL)
+        self.msg_box.delete(0.0, 'end')
+        for message in messages:
+            if message['from'] == 'you':
+                self.msg_box.insert(tk.END, message['message'] + '\n') 
+            else:
+                self.msg_box.tag_configure('tag-right', justify='right')
+                self.msg_box.insert(tk.END, message['message'] + '\n', 'tag-right')
+        self.msg_box.configure(state=tk.DISABLED)
+    
+
     """
     Returns the text that is currently displayed in the entry_editor widget.
     """
@@ -77,24 +102,24 @@ class Body(tk.Frame):
     """
     Populates the self._posts attribute with posts from the active DSU file.
     """
-    def set_recipients(self, recipients:list):
+    def set_messages(self, messages:list):
         # TODO: Write code to populate self._posts with the post data passed
         # in the posts parameter and repopulate the UI with the new post entries.
         # HINT: You will have to write the delete code yourself, but you can take 
         # advantage of the self.insert_posttree method for updating the posts_tree
         # widget.
         #TODO: Support recipients instead of posts
-        self.recipients = recipients
+        self.messages = messages
         #Repopulates the UI with the new post entries
-        for index, recipient in enumerate(self.recipients):
-            self._insert_post_tree(index, recipient)
+        for index, message in enumerate(self.messages):
+            self._insert_post_tree(index, message['recipient'])
 
     """
      Inserts a single post to the post_tree widget.
     """
     def insert_post(self, recipient):
-        self.recipients.append(recipient)
-        id = len(self.recipients) - 1 #adjust id for 0-base of treeview widget
+        self.messages.append(recipient)
+        id = len(self.messages) - 1 #adjust id for 0-base of treeview widget
         self._insert_post_tree(id, recipient)
 
 
@@ -149,7 +174,7 @@ class Body(tk.Frame):
         self.entry_editor.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=0, pady=0)
 
         self.msg_box = tk.Text(master=msg_frame, width=0, height=21)
-        # self.msg_box.configure(state=tk.DISABLED)
+        self.msg_box.configure(state=tk.DISABLED)
         self.msg_box.pack(fill=tk.BOTH, side=tk.LEFT, expand=True, padx=0, pady=0)
 
         #REFERENCE
@@ -172,10 +197,10 @@ A subclass of tk.Frame that is responsible for drawing all of the widgets
 in the footer portion of the root frame.
 """
 class Footer(tk.Frame):
-    def __init__(self, root, save_callback=None):
+    def __init__(self, root, send_callback=None):
         tk.Frame.__init__(self, root)
         self.root = root
-        self._save_callback = save_callback
+        self._send_callback = send_callback
         # IntVar is a variable class that provides access to special variables
         # for Tkinter widgets. is_online is used to hold the state of the chk_button widget.
         # The value assigned to is_online when the chk_button widget is changed by the user
@@ -201,8 +226,8 @@ class Footer(tk.Frame):
     available, when the save_button has been clicked.
     """
     def save_click(self):
-        if self._save_callback is not None:
-            self._save_callback()
+        if self._send_callback is not None:
+            self._send_callback()
 
     """
     Updates the text that is displayed in the footer_label widget
@@ -214,9 +239,9 @@ class Footer(tk.Frame):
     Call only once upon initialization to add widgets to the frame
     """
     def _draw(self):
-        save_button = tk.Button(master=self, text="Send", width=20)
-        save_button.configure(command=self.save_click)
-        save_button.pack(fill=tk.BOTH, side=tk.RIGHT, padx=5, pady=5)
+        send_button = tk.Button(master=self, text="Send", width=20)
+        send_button.configure(command=self.save_click)
+        send_button.pack(fill=tk.BOTH, side=tk.RIGHT, padx=5, pady=5)
 
         # TODO: change button
         #self.chk_button = tk.Checkbutton(master=self, text="Online", variable=self.is_online)
@@ -273,7 +298,7 @@ class MainApp(tk.Frame):
 
         self.body.reset_ui()
 
-        self.body.set_recipients(self._current_profile.get_recipients())
+        self.body.set_messages(self._current_profile.get_messages())
         # TODO: Write code to perform whatever operations are necessary to prepare the UI for
         # an existing DSU file.
         # HINT: You will probably need to do things like load a profile, import encryption keys 
@@ -288,7 +313,7 @@ class MainApp(tk.Frame):
     """
     Saves the text currently in the entry_editor widget to the active DSU file.
     """
-    def save_profile(self):
+    def send_msg(self):
         # TODO: Write code to perform whatever operations are necessary to save a 
         # post entry when the user clicks the save_button widget.
         # HINT: You will probably need to do things like create a new Post object,
@@ -296,14 +321,21 @@ class MainApp(tk.Frame):
         # clear the editor_entry UI for a new post.
         # This might also be a good place to check if the user has selected the online
         # checkbox and if so send the message to the server.
-        msg = self.body.get_text_entry()
-        self.body.insert_post(msg)
 
+        # self.body.set_messages(self.body.messages)
+
+        text = self.body.get_text_entry()
+
+        recipient = self.body.messages[index_global]['recipient']
+
+        self._current_profile.add_message(Messages(recipient, {"from": 'me', "message": text, "timestamp": time.time()}))
         #Adds the post to the profile and saves it locally
-        self._current_profile.add_post(msg)
         self._current_profile.save_profile(self._profile_filename)
         #Resets the UI text box
         self.body.set_text_entry("")
+
+        #self.body.reset_ui()
+        self.body.insert_msg_box()
 
 
     def save_add(self):
@@ -318,10 +350,14 @@ class MainApp(tk.Frame):
             user = self.add_entry_edit.get(1.0, 2.0).rstrip()
             recipient = user[user.index('"') + 1:-1]
             # Entries must be between the double quotes
-            self.body.insert_post(recipient)
+            self._current_profile.add_message(Messages(recipient))
             #self._current_profile.add_recipient(recipient)
             self._current_profile.save_profile(self._profile_filename)
-        except:
+            self.body.reset_ui()
+            for index, message in enumerate(self.body.messages):
+                self.body._insert_post_tree(index, message['recipient'])
+        except Exception as e:
+            print(e)
             print('Username error. Make sure input is between double quotes and that a profile is active!')
 
 
@@ -400,7 +436,7 @@ class MainApp(tk.Frame):
         self.body.pack(fill=tk.BOTH, side=tk.TOP, expand=True)
         
         # HINT: There may already be a class method that serves as a good callback function!
-        self.footer = Footer(self.root, save_callback=self.save_profile)
+        self.footer = Footer(self.root, send_callback=self.send_msg)
         self.footer.pack(fill=tk.BOTH, side=tk.BOTTOM)
 
 if __name__ == "__main__":
