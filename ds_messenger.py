@@ -1,8 +1,9 @@
 import ds_client
 import ds_protocol
 import socket
+import time
 
-class DirectMessage:
+class DirectMessage():
     message = ''
     def __init__(self, recipient, message, timestamp):
         self.recipient = recipient
@@ -43,7 +44,7 @@ class DirectMessenger:
 
             
     def send(self, message:str, recipient:str) -> bool:
-        dm_msg = '{"token":"'+  self.token  +'", "directmessage": {"entry": "' + message + '","recipient": "' + recipient + '","timestamp": ""}}'
+        dm_msg = '{"token":"'+  self.token  +'", "directmessage": {"entry": "' + message + '","recipient": "' + recipient + '","timestamp": ' + str(time.time()) + '}}'
 
         ds_protocol.send_msg(dm_msg, self.sends)
         json1 = ds_protocol.rec_msg(self.recvs, ' direct message')
@@ -61,7 +62,7 @@ class DirectMessenger:
 
         dm_list = []
         for msg in msg_list:
-            obj = DirectMessage(self.usr, msg, '')
+            obj = DirectMessage(self.usr, msg, resp['response']['messages'][0]['timestamp'])
             dm_list.append(obj)
         return dm_list
     
@@ -73,7 +74,7 @@ class DirectMessenger:
 
         dm_list = []
         for msg in msg_list:
-            obj = DirectMessage(self.usr, msg, '')
+            obj = DirectMessage(self.usr, msg, resp['response']['messages'][0]['timestamp'])
             dm_list.append(obj)
         return dm_list
 

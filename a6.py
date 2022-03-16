@@ -16,8 +16,6 @@
 # 
 # The following module provides a graphical user interface shell for the DSP journaling program.
 
-# TODO: take out null
-
 from cmath import e
 from ctypes import alignment
 from pickle import TRUE
@@ -263,6 +261,13 @@ class MainApp(tk.Frame):
 
         self._current_profile = Profile()
 
+        self._current_profile.dsuserver = '168.235.86.101'
+        self._current_profile.username = 'vanillamilkshake'
+        self._current_profile.password = 'yum'
+        self._current_profile.bio = 'mybio'
+
+        self.dm = DirectMessenger(self._current_profile.dsuserver, self._current_profile.username, self._current_profile.password)
+
         self._profile_filename = None
 
         self.add_window = None
@@ -327,6 +332,8 @@ class MainApp(tk.Frame):
         text = self.body.get_text_entry()
 
         recipient = self.body.messages[index_global]['recipient']
+
+        self.dm.send(text, recipient)
 
         self._current_profile.add_message(Messages(recipient, {"from": 'me', "message": text, "timestamp": time.time()}))
         #Adds the post to the profile and saves it locally
@@ -394,6 +401,30 @@ class MainApp(tk.Frame):
 
         self.add_entry_edit = entry_edit
 
+
+    def update_messages(self):
+        global msgs
+        msgs = self.dm.retrieve_new()
+
+        # for index, message in enumerate(all):
+        #     all_msgs.append(all[index].message)
+
+        # TODO: make the from 'you'
+        # TODO: combine it with local file messages
+        # TODO: add to msg view according to timestamps
+
+        for index, message in enumerate(msgs):
+            # print(message)
+            self._current_profile.add_message(Messages(msgs[index].recipient, {"from": 'you', "message": msgs[index].message, "timestamp": msgs[index].timestamp}))
+
+        self._current_profile.save_profile(self._profile_filename)
+        
+        # {"response": {"type": "ok", "messages": [{"message":"Hello User 1!", "from":"markb", "timestamp":"1603167689.3928561"},{"message":"Bzzzzz", "from":"thebeemoviescript" "timestamp":"1603167689.3928561"}]}}
+
+        # self._current_profile.add_message(Messages(recipient, {"from": 'me', "message": text, "timestamp": time.time()}))
+        # self._current_profile.save_profile(self._profile_filename)
+        self.body.insert_msg_box()
+        self.root.after(5000, self.update_messages)
     
     # """
     # A callback function for responding to changes to the online chk_button.
@@ -457,7 +488,7 @@ if __name__ == "__main__":
     # Initialize the MainApp class, which is the starting point for the widgets used in the program.
     # All of the classes that we use, subclass Tk.Frame, since our root frame is main, we initialize 
     # the class with it.
-    MainApp(main)
+    app = MainApp(main)
 
     # When update is called, we finalize the states of all widgets that have been configured within the root frame.
     # Here, Update ensures that we get an accurate width and height reading based on the types of widgets
@@ -467,4 +498,5 @@ if __name__ == "__main__":
     main.update()
     main.minsize(main.winfo_width(), main.winfo_height())
     # And finally, start up the event loop for the program (more on this in lecture).
+    main.after(5000, app.update_messages)
     main.mainloop()

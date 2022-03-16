@@ -98,7 +98,10 @@ class Messages(dict):
 
         # Subclass dict to expose Post properties for serialization
         # Don't worry about this!
-        dict.__init__(self, recipient=self._recipient, messages=[self._messages])
+        if messages != None:
+            dict.__init__(self, recipient=self._recipient, messages=[self._messages])
+        else:
+            dict.__init__(self, recipient=self._recipient, messages=[])
     
     def set_messages(self, messages):
         if messages != None:
