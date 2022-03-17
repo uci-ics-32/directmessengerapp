@@ -3,7 +3,7 @@ import ds_protocol
 import socket
 import time
 
-class DirectMessage():
+class DirectMessage:
     message = ''
     def __init__(self, recipient, message, timestamp):
         self.recipient = recipient
@@ -46,12 +46,15 @@ class DirectMessenger:
     def send(self, message:str, recipient:str) -> bool:
         dm_msg = '{"token":"'+  self.token  +'", "directmessage": {"entry": "' + message + '","recipient": "' + recipient + '","timestamp": ' + str(time.time()) + '}}'
 
-        ds_protocol.send_msg(dm_msg, self.sends)
-        json1 = ds_protocol.rec_msg(self.recvs, ' direct message')
-        ds_protocol.convert_to_list(json1)
-        
-        # TODO: return false if send failed
-        return True
+        try:
+            ds_protocol.send_msg(dm_msg, self.sends)
+            json1 = ds_protocol.rec_msg(self.recvs, ' direct message')
+            ds_protocol.convert_to_list(json1)
+            return True
+        except:
+            print('Error in sending Direct Message')
+            return False
+
             
     def retrieve_new(self) -> list:
         inbox_msg = '{"token":"'+  self.token  +'", "directmessage": "new"}'

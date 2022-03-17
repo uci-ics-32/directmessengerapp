@@ -19,6 +19,7 @@
 from cmath import e
 from ctypes import alignment
 from pickle import TRUE
+from shutil import ExecError
 import tkinter as tk
 from tkinter import E, Toplevel, ttk, filedialog
 from turtle import right, width
@@ -27,6 +28,10 @@ from Profile import Profile
 from Profile import Messages
 from ds_messenger import DirectMessenger
 import time
+
+
+class NoMessages(Exception):
+    pass
 
 """
 A subclass of tk.Frame that is responsible for drawing all of the widgets
@@ -433,8 +438,8 @@ class MainApp(tk.Frame):
         # self._current_profile.save_profile(self._profile_filename)
             try:
                 self.body.insert_msg_box()
-            except:
-                print('No messages yet.')
+            except Exception as e:
+                raise NoMessages(e)
             finally:
                 self.root.after(5000, self.update_messages)
         
