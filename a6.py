@@ -19,7 +19,6 @@
 from cmath import e
 from ctypes import alignment
 from pickle import TRUE
-from shutil import ExecError
 import tkinter as tk
 from tkinter import E, Toplevel, ttk, filedialog
 from turtle import right, width
