@@ -412,20 +412,26 @@ class MainApp(tk.Frame):
         # TODO: make the from 'you'
         # TODO: combine it with local file messages
         # TODO: add to msg view according to timestamps
+        if self._profile_filename == None:
+            self.root.after(5000, self.update_messages)
+        else:
+            for index, message in enumerate(msgs):
+                # print(message)
+                self._current_profile.add_message(Messages(msgs[index].recipient, {"from": 'you', "message": msgs[index].message, "timestamp": msgs[index].timestamp}))
 
-        for index, message in enumerate(msgs):
-            # print(message)
-            self._current_profile.add_message(Messages(msgs[index].recipient, {"from": 'you', "message": msgs[index].message, "timestamp": msgs[index].timestamp}))
-
-        self._current_profile.save_profile(self._profile_filename)
+            self._current_profile.save_profile(self._profile_filename)
         
         # {"response": {"type": "ok", "messages": [{"message":"Hello User 1!", "from":"markb", "timestamp":"1603167689.3928561"},{"message":"Bzzzzz", "from":"thebeemoviescript" "timestamp":"1603167689.3928561"}]}}
 
         # self._current_profile.add_message(Messages(recipient, {"from": 'me', "message": text, "timestamp": time.time()}))
         # self._current_profile.save_profile(self._profile_filename)
-        self.body.insert_msg_box()
-        self.root.after(5000, self.update_messages)
-    
+            try:
+                self.body.insert_msg_box()
+            except:
+                print('No messages yet.')
+            finally:
+                self.root.after(5000, self.update_messages)
+        
     # """
     # A callback function for responding to changes to the online chk_button.
     # """
