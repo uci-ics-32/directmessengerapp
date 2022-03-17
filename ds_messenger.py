@@ -60,6 +60,11 @@ class DirectMessenger:
         resp = ds_protocol.rec_msg(self.recvs, ' new messages')
         msg_list = ds_protocol.convert_to_list(resp)
 
+        try:
+            self.sender = resp['response']['messages'][0]['from']
+        except:
+            print('No messages')
+
         dm_list = []
         for msg in msg_list:
             obj = DirectMessage(self.usr, msg, resp['response']['messages'][0]['timestamp'])

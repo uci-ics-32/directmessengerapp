@@ -416,8 +416,7 @@ class MainApp(tk.Frame):
             self.root.after(5000, self.update_messages)
         else:
             for index, message in enumerate(msgs):
-                # print(message)
-                self._current_profile.add_message(Messages(msgs[index].recipient, {"from": 'you', "message": msgs[index].message, "timestamp": msgs[index].timestamp}))
+                self._current_profile.add_message(Messages(self.dm.sender, {"from": 'you', "message": msgs[index].message, "timestamp": msgs[index].timestamp}))
 
             self._current_profile.save_profile(self._profile_filename)
         
