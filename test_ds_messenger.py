@@ -1,9 +1,13 @@
 from ds_messenger import DirectMessenger
 
+# Creates an object for the DirectMessenger class
 dm = DirectMessenger("168.235.86.101", "vanillamilkshake", "yum")
 
-dm.send("yo", "nokizzy")
+# Sends a message over the server
+dm.send("yo", "vanillamilkshake")
+# Retrieves all new messages from the server for this profile
 new = dm.retrieve_new()
+# Retrieves ALL messages from the server for this profile
 inbox = dm.retrieve_all()
 
 new_msgs = []
@@ -15,7 +19,6 @@ for index, message in enumerate(new):
 for index, message in enumerate(inbox):
     all_msgs.append(inbox[index].message)
 
-# {"response": {"type": "ok", "messages": [{"message":"Hello User 1!", "from":"markb", "timestamp":"1603167689.3928561"},{"message":"Bzzzzz", "from":"thebeemoviescript" "timestamp":"1603167689.3928561"}]}}
 
 print('All messages: ' + str(all_msgs))
 print('New messages: ' + str(new_msgs))

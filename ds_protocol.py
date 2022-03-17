@@ -77,13 +77,14 @@ def convert_to_list(json):
   '''Extends the message conversion code to account for direct messaging responses'''
   message_list = []
 
+  # Extends message conversion for the response that includes 'message' for the server
   try:
     message = json['response']['message']
     message_list.append(message)
+  # Extends message conversion for the response that includes 'messages' for the server
   except:
     messages = json['response']['messages']
     for message in messages:
-    # TODO: get who the message is from
       message_list.append(message['message'])
   
   return message_list
