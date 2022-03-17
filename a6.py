@@ -419,6 +419,13 @@ class MainApp(tk.Frame):
                 self._current_profile.add_message(Messages(self.dm.sender, {"from": 'you', "message": msgs[index].message, "timestamp": msgs[index].timestamp}))
 
             self._current_profile.save_profile(self._profile_filename)
+
+            # self.body.reset_ui()
+            try:
+                for index, message in enumerate(self.body.messages):
+                    self.body._insert_post_tree(index, message['recipient'])
+            except:
+                print('')
         
         # {"response": {"type": "ok", "messages": [{"message":"Hello User 1!", "from":"markb", "timestamp":"1603167689.3928561"},{"message":"Bzzzzz", "from":"thebeemoviescript" "timestamp":"1603167689.3928561"}]}}
 
